@@ -2,8 +2,8 @@
 # Contributor: Sidney Crestani <sidneycrestani@archlinux.net>
 # Contributor: sxe <sxxe@gmx.de>
 
-pkgname=wine-git
-pkgver=4.20.r74.ga9c4b309f6
+pkgname=wine-eac-git
+pkgver=5.5.r1180.geb070d60ba
 pkgrel=1
 pkgdesc='A compatibility layer for running Windows programs (git version)'
 arch=('i686' 'x86_64')
@@ -88,7 +88,7 @@ optdepends=(
 )
 options=('staticlibs')
 install="${pkgname}.install"
-source=('git://source.winehq.org/git/wine.git'
+source=('git://github.com/Guy1524/wine.git#branch=easy-anti-cheat'
         '30-win32-aliases.conf'
         'wine-binfmt.conf')
 sha256sums=('SKIP'
@@ -117,7 +117,10 @@ prepare() {
     [ "$CARCH" = 'x86_64' ] && mkdir "$pkgname"-64-build
     
     cd wine
-    
+
+    # revert "Bad vibes" commit
+    git revert -n 8224e2acbefd0f5c626c98249cdc636ef0cb0613
+
     # fix path of opencl headers
     sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure*
 }
@@ -145,7 +148,8 @@ build() {
                     --libdir='/usr/lib' \
                     --with-x \
                     --with-gstreamer \
-                    --enable-win64
+                    --enable-win64 \
+                    --disable-tests
         make
         local _wine32opts=(
                     '--libdir=/usr/lib32'
@@ -161,6 +165,7 @@ build() {
                 --prefix='/usr' \
                 --with-x \
                 --with-gstreamer \
+                --disable-tests \
                 ${_wine32opts[@]}
     make
 }
