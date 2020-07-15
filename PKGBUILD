@@ -88,7 +88,7 @@ optdepends=(
 )
 options=('staticlibs')
 install="${pkgname}.install"
-source=('git://github.com/Guy1524/wine.git#branch=easy-anti-cheat'
+source=('git://github.com/ardadem/wine.git#branch=easy-anti-cheat'
         '30-win32-aliases.conf'
         'wine-binfmt.conf')
 sha256sums=('SKIP'
@@ -117,9 +117,6 @@ prepare() {
     [ "$CARCH" = 'x86_64' ] && mkdir "$pkgname"-64-build
     
     cd wine
-
-    # revert "Bad vibes" commit
-    git revert -n 8224e2acbefd0f5c626c98249cdc636ef0cb0613
 
     # fix path of opencl headers
     sed 's|OpenCL/opencl.h|CL/opencl.h|g' -i configure*
